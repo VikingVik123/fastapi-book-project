@@ -27,7 +27,7 @@ jobs:
       - name: Run Tests
         run: pytest
 
-deploy:
+  deploy:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
