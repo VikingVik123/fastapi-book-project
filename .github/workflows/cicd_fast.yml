@@ -21,11 +21,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          python -m venv venv
+          source venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Tests
-        run: pytest
+        run: |
+          source venv/bin/activate
+          pytest
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,6 +60,8 @@ jobs:
           script: |
             cd /root/fastapi-book-project
             git pull origin main
+            python -m venv venv
+            source venv/bin/activate
             pip install -r requirements.txt
             
             pkill -f 'uvicorn' || true
