@@ -31,4 +31,4 @@ typing_extensions==4.12.2
 urllib3==2.2.3
 uvicorn==0.18.3
 wrapt==1.17.2
-pyOpenSSL==23.0.0
+
