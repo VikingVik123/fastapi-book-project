@@ -28,43 +28,34 @@ jobs:
         run: pytest
 
   deploy:
-    needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    needs: test
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Deploy Application
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
         run: |
-          ssh ubuntu@100.25.191.235 << 'EOF'
-            set -e
-            if [ ! -d "/home/ubuntu/app" ]; then
-              git clone https://github.com/VikingVik123/fastapi-book-project.git /home/ubuntu/app
-            fi
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-            cd /home/ubuntu/app
-            git reset --hard
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/fastapi-book-project
             git pull origin main
-
-            pip3 install --user -r requirements.txt
-            pkill -f "uvicorn" || true
-            nohup uvicorn main:app --host 0.0.0.0 --port 8000 > output.log 2>&1 &
-
-            sudo apt update && sudo apt install -y nginx
-            sudo tee /etc/nginx/sites-available/fastapi > /dev/null << 'NGINX_CONF'
-            server {
-              listen 80;
-              server_name 100.25.191.235;
-
-              location / {
-                proxy_pass http://127.0.0.1:8000;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              }
-            }
-            NGINX_CONF
-            sudo ln -sf /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
-            sudo service nginx restart
-          EOF
+            pip install -r requirements.txt
+            
+            pkill -f 'uvicorn' || true
+            
+            nohup uvicorn main:app --host 0.0.0.0 --port 8000 --reload & 
