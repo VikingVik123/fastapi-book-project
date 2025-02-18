@@ -33,6 +33,8 @@ jobs:
           pytest
       - name: Notify Telex
         if: success()
+        env:
+          TELEX_WEBHOOK: ${{ secrets.TELEX_WEBHOOK }}
         run: |
           curl -X POST \
           "https://ping.telex.im/v1/webhooks/01950935-fde6-7587-807d-4ef4bd395a5d" \
@@ -43,9 +45,11 @@ jobs:
           "status": "success",
           "username": "GitHub Actions",
           "message": "Tests passed for ${{ github.event_name }}",
-          }' ${{ secrets.TELEX_WEBHOOK }}
+          }' $TELEX_WEBHOOK
       - name: Notify Telex
         if: failure()
+        env:
+          TELEX_WEBHOOK: ${{ secrets.TELEX_WEBHOOK }}
         run: |
           curl -X POST \
           "https://ping.telex.im/v1/webhooks/01950935-fde6-7587-807d-4ef4bd395a5d" \
@@ -56,7 +60,7 @@ jobs:
           "status": "failure",
           "username": "GitHub Actions",
           "message": "Tests failed for ${{ github.event_name }}",
-          }' ${{ secrets.TELEX_WEBHOOK }}
+          }' $TELEX_WEBHOOK
 
   deploy:
     runs-on: ubuntu-latest
@@ -92,4 +96,4 @@ jobs:
             source venv/bin/activate
             pip install -r requirements.txt
             
-            nohup uvicorn main:app --host 0.0.0.0 --port 8000 --reload & 
+            nohup uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
