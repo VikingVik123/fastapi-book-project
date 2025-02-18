@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     DEBUG: bool = False
     TESTING: bool = False
+    TICK_URL: str = "http://100.25.191.235/telex-webhook"
+    SLACK_WEBHOOK_URL: str = "https://hooks.slack.com/services/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"
 
 
 settings = Settings()
