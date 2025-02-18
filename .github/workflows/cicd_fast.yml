@@ -37,7 +37,7 @@ jobs:
           TELEX_WEBHOOK: ${{ secrets.TELEX_WEBHOOK }}
         run: |
           curl -X POST \
-          "https://ping.telex.im/v1/webhooks/01950935-fde6-7587-807d-4ef4bd395a5d" \
+          $TELEX_WEBHOOK \
           -H "accept: application/json" \
           -H "Content-Type: application/json" \
           -d '{
@@ -45,14 +45,14 @@ jobs:
           "status": "success",
           "username": "GitHub Actions",
           "message": "Tests passed for ${{ github.event_name }}",
-          }' $TELEX_WEBHOOK
+          }'
       - name: Notify Telex
         if: failure()
         env:
           TELEX_WEBHOOK: ${{ secrets.TELEX_WEBHOOK }}
         run: |
           curl -X POST \
-          "https://ping.telex.im/v1/webhooks/01950935-fde6-7587-807d-4ef4bd395a5d" \
+          $TELEX_WEBHOOK \
           -H "accept: application/json" \
           -H "Content-Type: application/json" \
           -d '{
@@ -60,7 +60,7 @@ jobs:
           "status": "failure",
           "username": "GitHub Actions",
           "message": "Tests failed for ${{ github.event_name }}",
-          }' $TELEX_WEBHOOK
+          }'
 
   deploy:
     runs-on: ubuntu-latest

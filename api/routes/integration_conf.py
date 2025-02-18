@@ -59,7 +59,7 @@ integration_json = {
         "default": "true"
       }
     ],
-    "target_url": "https://hooks.slack.com/services/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",
+    "target_url": "",
     "tick_url": "http://100.25.191.235/telex-webhook"
   }
 }
