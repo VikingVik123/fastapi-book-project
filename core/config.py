@@ -1,5 +1,5 @@
 import secrets
-
+import os
 from pydantic_settings import BaseSettings
 
 
@@ -11,8 +11,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     DEBUG: bool = False
     TESTING: bool = False
-    TICK_URL: str = "http://100.25.191.235/telex-webhook"
-    SLACK_WEBHOOK_URL: str = ""
+    PUBLIC_IP: str = os.getenv("PUBLIC_IP", "100.25.191.235")
+    TICK_URL: str = f'http://{PUBLIC_IP}/telex-webhook'
+    SLACK_WEBHOOK_URL: str = os.getenv("SLACK_WEBHOOK_URL", "")
 
 
 settings = Settings()
